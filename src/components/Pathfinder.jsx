@@ -7,6 +7,7 @@ import "./Pathfinder.css";
 
 export default function Pathfinder() {
   const [grid, setGrid] = useState([]);
+  const [isMousePressed, setIsMousePressed] = useState(false);
   const rowSize = 23;
   const colSize = 50;
   let startRow = 11;
@@ -17,6 +18,30 @@ export default function Pathfinder() {
   useEffect(() => {
     generateGrid();
   }, []);
+  useEffect(() => {
+    displayGrid();
+  }, [grid]);
+
+  const onMouseDown = (row, col) => {
+    setIsMousePressed(true);
+    const newGrid = createWalls(row, col);
+    setGrid(newGrid);
+  };
+  const onMouseEnter = (row, col) => {
+    if (!isMousePressed) return;
+    const newGrid = createWalls(row, col);
+    setGrid(newGrid);
+  };
+  const onMouseUp = () => {
+    setIsMousePressed(false);
+  };
+
+  const createWalls = (row, col) => {
+    const newGrid = grid.slice();
+    const node = newGrid[row][col];
+    node.isWall = !node.isWall;
+    return newGrid;
+  };
 
   const visualizeDijkstra = () => {
     const start = grid[startRow][startCol];
@@ -66,6 +91,7 @@ export default function Pathfinder() {
       g.push(r);
     }
     setGrid(g);
+    // displayGrid();
   };
   const generateCell = (row, col) => {
     return {
@@ -78,6 +104,31 @@ export default function Pathfinder() {
       isWall: false,
       previousNode: null,
     };
+  };
+  const displayGrid = () => {
+    grid.map((row, rowIdx) => {
+      return (
+        <div className="row" key={`r${rowIdx}`}>
+          {row.map((cell, cellIdx) => {
+            const { row, col, isStart, isGoal, isWall } = cell;
+            return (
+              <Cell
+                key={`c${cellIdx}`}
+                row={row}
+                col={col}
+                isStart={isStart}
+                isGoal={isGoal}
+                isWall={isWall}
+                onMouseDown={onMouseDown}
+                onMouseEnter={onMouseEnter}
+                onMouseUp={onMouseUp}
+              />
+            );
+          })}
+        </div>
+      );
+    });
+    console.log(grid);
   };
 
   const resetBoard = () => {
@@ -112,6 +163,9 @@ export default function Pathfinder() {
                     isStart={isStart}
                     isGoal={isGoal}
                     isWall={isWall}
+                    onMouseDown={onMouseDown}
+                    onMouseEnter={onMouseEnter}
+                    onMouseUp={onMouseUp}
                   />
                 );
               })}

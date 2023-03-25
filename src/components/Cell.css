@@ -3,3 +3,6 @@
   height: 30px;
   outline: 1px solid red;
 }
+.wall {
+  background-color: red;
+}
