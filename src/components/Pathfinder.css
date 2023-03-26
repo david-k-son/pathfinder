@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #181a1b;
 }
 .row {
   display: flex;
@@ -19,6 +20,8 @@
   justify-content: center;
   align-items: center;
   gap: 2rem;
+  background-color: #203354;
+  color: white;
 }
 
 .node-visited {

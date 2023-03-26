@@ -1,8 +1,8 @@
 .cell {
   width: 30px;
   height: 30px;
-  outline: 1px solid red;
+  outline: 1px solid #23395d;
 }
 .wall {
-  background-color: red;
+  background-color: #203354;
 }

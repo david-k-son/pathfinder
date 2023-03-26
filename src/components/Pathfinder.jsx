@@ -2,25 +2,25 @@ import React, { useState, useEffect } from "react";
 // import Grid from "./Grid";
 import Cell from "./Cell";
 import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
+import { aStar, displayAStar } from "../algorithms/Astar";
 
 import "./Pathfinder.css";
 
 export default function Pathfinder() {
   const [grid, setGrid] = useState([]);
   const [isMousePressed, setIsMousePressed] = useState(false);
-  const rowSize = 23;
-  const colSize = 50;
-  let startRow = 11;
-  let startCol = 5;
+  const [startRow, setStartRow] = useState(11);
+  const [startCol, setStartCol] = useState(5);
+  const rowSize = 18;
+  const colSize = 40;
+  // let startRow = 11;
+  // let startCol = 5;
   let goalRow = 11;
   let goalCol = 10;
 
   useEffect(() => {
     generateGrid();
   }, []);
-  useEffect(() => {
-    displayGrid();
-  }, [grid]);
 
   const onMouseDown = (row, col) => {
     setIsMousePressed(true);
@@ -48,12 +48,23 @@ export default function Pathfinder() {
     const goal = grid[goalRow][goalCol];
     const visited = dijkstra(start, goal, grid);
     const path = displayDijkstra(goal);
+    animateAlgorithm(visited, path);
+  };
+
+  const visualizeAStar = () => {
+    const start = grid[startRow][startCol];
+    const goal = grid[goalRow][goalCol];
+    const visited = aStar(start, goal, grid);
     console.log(visited);
+    const path = displayAStar(goal);
     console.log(path);
     animateAlgorithm(visited, path);
   };
 
   const animateAlgorithm = (visited, path) => {
+    console.log("ANIMATE!");
+    console.log(visited);
+    console.log(path);
     for (let i = 0; i <= visited.length; i++) {
       const node = visited[i];
       if (i == visited.length) {
@@ -105,38 +116,20 @@ export default function Pathfinder() {
       previousNode: null,
     };
   };
-  const displayGrid = () => {
-    grid.map((row, rowIdx) => {
-      return (
-        <div className="row" key={`r${rowIdx}`}>
-          {row.map((cell, cellIdx) => {
-            const { row, col, isStart, isGoal, isWall } = cell;
-            return (
-              <Cell
-                key={`c${cellIdx}`}
-                row={row}
-                col={col}
-                isStart={isStart}
-                isGoal={isGoal}
-                isWall={isWall}
-                onMouseDown={onMouseDown}
-                onMouseEnter={onMouseEnter}
-                onMouseUp={onMouseUp}
-              />
-            );
-          })}
-        </div>
-      );
-    });
-    console.log(grid);
-  };
 
   const resetBoard = () => {
     const cells = document.querySelectorAll("div.cell");
     for (const cell of cells) {
-      cell.classList.remove("node-path", "node-visited");
+      cell.classList.remove("node-path", "node-visited", "wall");
     }
-    console.log(cells);
+    for (const r of grid) {
+      for (const c of r) {
+        c.distance = Infinity;
+        c.isVisited = false;
+        c.isWall = false;
+        c.previousNode = null;
+      }
+    }
   };
 
   return (
@@ -145,7 +138,8 @@ export default function Pathfinder() {
         <p>Pathfinder Visualizer</p>
         <div className="path-algorithms">Algorithms</div>
         <div className="maze-algorithms">Maze Generator</div>
-        <button onClick={visualizeDijkstra}>RUN</button>
+        <button onClick={visualizeDijkstra}>Dijkstra</button>
+        <button onClick={visualizeAStar}>A*</button>
         <button onClick={resetBoard}>RESET</button>
       </div>
 
