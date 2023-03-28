@@ -12,14 +12,19 @@ export default function Pathfinder() {
   const [isMousePressed, setIsMousePressed] = useState(false);
   const [startRow, setStartRow] = useState(11);
   const [startCol, setStartCol] = useState(5);
+  const [goalRow, setGoalRow] = useState(11);
+  const [goalCol, setGoalCol] = useState(10);
   const rowSize = 18;
   const colSize = 40;
   // let startRow = 11;
   // let startCol = 5;
-  let goalRow = 11;
-  let goalCol = 10;
+  // let goalRow = 11;
+  // let goalCol = 10;
 
   const [algorithm, setAlgorithm] = useState("A*");
+
+  const [moveStart, setMoveStart] = useState(false);
+  const [moveGoal, setMoveGoal] = useState(false);
 
   useEffect(() => {
     generateGrid();
@@ -27,6 +32,19 @@ export default function Pathfinder() {
 
   const selectAlgorithm = (algorithm) => {
     setAlgorithm(algorithm);
+  };
+
+  const moveTheGoal = () => {
+    const g = document.querySelector(".goal");
+    g.classList.add("opacity");
+    setMoveGoal(true);
+    g.classList.remove(".goal", ".opacity");
+  };
+  const moveTheStart = () => {
+    const s = document.querySelector(".start");
+    s.classList.add("opacity");
+    setMoveStart(true);
+    s.classList.remove(".start", ".opacity");
   };
 
   const runAlgorithm = () => {
@@ -38,11 +56,47 @@ export default function Pathfinder() {
   };
 
   const onMouseDown = (row, col) => {
+    if (moveGoal) {
+      const newGrid = grid.slice();
+      newGrid[row][col].isGoal = true;
+      newGrid[goalRow][goalCol].isGoal = false;
+      setGoalRow(row);
+      setGoalCol(col);
+      setGrid(newGrid);
+      setMoveGoal(false);
+      document.querySelector(`#c-r${row}-c${col}`).classList.add("goal");
+      return;
+    }
+    if (moveStart) {
+      const newGrid = grid.slice();
+      newGrid[row][col].isStart = true;
+      newGrid[startRow][startCol].isStart = false;
+      setStartRow(row);
+      setStartCol(col);
+      setGrid(newGrid);
+      setMoveStart(false);
+      document.querySelector(`#c-r${row}-c${col}`).classList.add("start");
+      return;
+    }
+    // DO NOT MAKE WALLS OVER THE START OR THE GOAL
+    if (
+      (row === startRow && col === startCol) ||
+      (row === goalRow && col === goalCol)
+    ) {
+      return;
+    }
     setIsMousePressed(true);
     const newGrid = createWalls(row, col);
     setGrid(newGrid);
   };
   const onMouseEnter = (row, col) => {
+    // DO NOT MAKE WALLS OVER THE START OR THE GOAL
+    if (
+      (row === startRow && col === startCol) ||
+      (row === goalRow && col === goalCol)
+    ) {
+      return;
+    }
     if (!isMousePressed) return;
     const newGrid = createWalls(row, col);
     setGrid(newGrid);
@@ -69,6 +123,7 @@ export default function Pathfinder() {
   const visualizeAStar = () => {
     const start = grid[startRow][startCol];
     const goal = grid[goalRow][goalCol];
+    console.log(goalRow, goalCol);
     const visited = aStar(start, goal, grid);
     console.log(visited);
     const path = displayAStar(goal);
@@ -149,26 +204,32 @@ export default function Pathfinder() {
   return (
     <div>
       <div className="nav">
-        <p>Pathfinder Visualizer</p>
-        <DropdownMenu
-          title={"Algorithms"}
-          options={["A*", "Dijkstra"]}
-          selection={selectAlgorithm}
-        />
-        <div className="maze-algorithms">Maze Generator</div>
-        <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
-        <button onClick={resetBoard}>RESET</button>
+        <div className="nav-top">
+          <p>Pathfinder Visualizer</p>
+          <DropdownMenu
+            title={"Algorithms"}
+            options={["A*", "Dijkstra"]}
+            selection={selectAlgorithm}
+          />
+          <div className="maze-algorithms">Maze Generator</div>
+          <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
+          <button onClick={resetBoard}>RESET</button>
+        </div>
+        <div className="nav-bottom">
+          <button onClick={moveTheStart}>Move Start</button>
+          <button onClick={moveTheGoal}>Move Goal</button>
+        </div>
       </div>
 
       <div className="grid">
         {grid.map((row, rowIdx) => {
           return (
-            <div className="row" key={`r${rowIdx}`}>
+            <div className="row" key={`grid-row-${rowIdx}`}>
               {row.map((cell, cellIdx) => {
                 const { row, col, isStart, isGoal, isWall } = cell;
                 return (
                   <Cell
-                    key={`c${cellIdx}`}
+                    key={`cell-${cellIdx}`}
                     row={row}
                     col={col}
                     isStart={isStart}

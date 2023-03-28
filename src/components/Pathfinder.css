@@ -14,14 +14,28 @@
 .goal {
   background-color: red;
 }
+.opacity {
+  opacity: 0.5;
+}
 
 .nav {
+  /* display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background-color: #203354;
+  color: white; */
+}
+.nav-top {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 2rem;
   background-color: #203354;
   color: white;
+}
+.nav-bottom {
+  background-color: #203354;
 }
 
 .node-visited {
