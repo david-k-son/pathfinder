@@ -25,8 +25,11 @@
   gap: 2rem;
   background-color: #203354;
   color: white; */
+  background-color: #203354;
+  padding-bottom: 0.5rem;
 }
-.nav-top {
+.nav-top,
+.nav-bottom {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,8 +37,12 @@
   background-color: #203354;
   color: white;
 }
-.nav-bottom {
-  background-color: #203354;
+.nav-bottom button {
+  padding: 0.5rem 1rem;
+  background-color: #36568d;
+  border: none;
+  border-radius: 5px;
+  color: white;
 }
 
 .node-visited {
@@ -43,7 +50,7 @@
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
   animation-delay: 0;
-  /* animation-direction: alternate; */
+  animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   animation-play-state: running;

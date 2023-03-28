@@ -212,12 +212,12 @@ export default function Pathfinder() {
             selection={selectAlgorithm}
           />
           <div className="maze-algorithms">Maze Generator</div>
-          <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
-          <button onClick={resetBoard}>RESET</button>
         </div>
         <div className="nav-bottom">
           <button onClick={moveTheStart}>Move Start</button>
           <button onClick={moveTheGoal}>Move Goal</button>
+          <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
+          <button onClick={resetBoard}>RESET</button>
         </div>
       </div>
 
