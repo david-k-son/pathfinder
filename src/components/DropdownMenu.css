@@ -1,0 +1,28 @@
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  height: 3rem;
+  padding: 0 1rem;
+}
+
+.dropdown-menu-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* gap: 1rem; */
+  position: absolute;
+  width: 5rem;
+  text-align: left;
+  padding: 1rem 0.5rem;
+  gap: 0.5rem;
+  top: 2rem;
+  background-color: #36568d;
+  border-radius: 10px;
+}
+
+.dropdown-menu-item {
+  list-style-type: none;
+  cursor: pointer;
+}

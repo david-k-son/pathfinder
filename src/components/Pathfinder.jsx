@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 // import Grid from "./Grid";
 import Cell from "./Cell";
+import DropdownMenu from "./DropdownMenu";
 import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
 import { aStar, displayAStar } from "../algorithms/Astar";
 
@@ -18,9 +19,23 @@ export default function Pathfinder() {
   let goalRow = 11;
   let goalCol = 10;
 
+  const [algorithm, setAlgorithm] = useState("A*");
+
   useEffect(() => {
     generateGrid();
   }, []);
+
+  const selectAlgorithm = (algorithm) => {
+    setAlgorithm(algorithm);
+  };
+
+  const runAlgorithm = () => {
+    if (algorithm === "A*") {
+      visualizeAStar();
+    } else if (algorithm === "Dijkstra") {
+      visualizeDijkstra();
+    }
+  };
 
   const onMouseDown = (row, col) => {
     setIsMousePressed(true);
@@ -102,7 +117,6 @@ export default function Pathfinder() {
       g.push(r);
     }
     setGrid(g);
-    // displayGrid();
   };
   const generateCell = (row, col) => {
     return {
@@ -136,10 +150,13 @@ export default function Pathfinder() {
     <div>
       <div className="nav">
         <p>Pathfinder Visualizer</p>
-        <div className="path-algorithms">Algorithms</div>
+        <DropdownMenu
+          title={"Algorithms"}
+          options={["A*", "Dijkstra"]}
+          selection={selectAlgorithm}
+        />
         <div className="maze-algorithms">Maze Generator</div>
-        <button onClick={visualizeDijkstra}>Dijkstra</button>
-        <button onClick={visualizeAStar}>A*</button>
+        <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
         <button onClick={resetBoard}>RESET</button>
       </div>
 
