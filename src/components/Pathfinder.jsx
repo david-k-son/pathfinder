@@ -5,6 +5,7 @@ import Nav from "./Nav";
 
 import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
 import { aStar, displayAStar } from "../algorithms/Astar";
+import { bfs, displayBfs } from "../algorithms/BreadthFirstSearch";
 
 import "./Pathfinder.css";
 
@@ -45,7 +46,17 @@ export default function Pathfinder() {
       visualizeAStar();
     } else if (algorithm === "Dijkstra") {
       visualizeDijkstra();
+    } else if (algorithm === "BFS") {
+      visualizeBFS();
     }
+  };
+
+  const visualizeAStar = () => {
+    const start = grid[startRow][startCol];
+    const goal = grid[goalRow][goalCol];
+    const visited = aStar(start, goal, grid);
+    const path = displayAStar(goal);
+    animateAlgorithm(visited, path);
   };
 
   const visualizeDijkstra = () => {
@@ -56,11 +67,11 @@ export default function Pathfinder() {
     animateAlgorithm(visited, path);
   };
 
-  const visualizeAStar = () => {
+  const visualizeBFS = () => {
     const start = grid[startRow][startCol];
     const goal = grid[goalRow][goalCol];
-    const visited = aStar(start, goal, grid);
-    const path = displayAStar(goal);
+    const visited = bfs(start, goal, grid);
+    const path = displayBfs(goal);
     animateAlgorithm(visited, path);
   };
 
