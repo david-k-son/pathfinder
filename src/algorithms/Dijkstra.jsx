@@ -15,6 +15,9 @@ export function dijkstra(start, goal, grid) {
     visitedNodes.push(closestNode);
     if (closestNode === goal) return visitedNodes;
     updateNotVisitedNodes(closestNode, grid);
+    while (notVisitedNodes.length && notVisitedNodes[0].isVisited) {
+      notVisitedNodes.shift();
+    }
   }
 }
 

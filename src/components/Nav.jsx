@@ -32,7 +32,7 @@ export default function Nav({
         <p>Pathfinder Visualizer</p>
         <DropdownMenu
           title={"Algorithms"}
-          options={["A*", "Dijkstra", "BFS"]}
+          options={["A*", "Dijkstra", "BFS", "DFS"]}
           selection={selectAlgorithm}
         />
         <DropdownMenu

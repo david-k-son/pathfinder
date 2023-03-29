@@ -1,11 +1,11 @@
-export function bfs(start, goal, grid) {
+export function dfs(start, goal, grid) {
   if (!start || !goal || start === goal) return false;
 
   const visitedNodes = [];
   start.distance = 0;
   const notVisitedNodes = [start];
   while (!!notVisitedNodes.length) {
-    const closestNode = notVisitedNodes.shift();
+    const closestNode = notVisitedNodes.pop();
 
     // skip if the node is a wall
     if (closestNode.isWall) {
@@ -26,7 +26,7 @@ export function bfs(start, goal, grid) {
     }
     updateNotVisitedNodes(closestNode, grid, notVisitedNodes);
     while (notVisitedNodes.length && notVisitedNodes[0].isVisited) {
-      notVisitedNodes.shift();
+      notVisitedNodes.pop();
     }
   }
 }
@@ -49,7 +49,7 @@ function getNotVisitedNeighbors(node, grid) {
   return neighbors.filter((neighbor) => !neighbor.isVisited);
 }
 
-export function displayBfs(goalNode) {
+export function displayDfs(goalNode) {
   const path = [];
   let cur = goalNode;
   while (cur !== null) {

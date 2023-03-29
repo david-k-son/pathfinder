@@ -15,6 +15,9 @@ export function aStar(start, goal, grid) {
     visitedNodes.push(closestNode);
     if (closestNode === goal) return visitedNodes;
     updateNotVisitedNodes(closestNode, grid, start, goal);
+    while (notVisitedNodes.length && notVisitedNodes[0].isVisited) {
+      notVisitedNodes.shift();
+    }
   }
 }
 

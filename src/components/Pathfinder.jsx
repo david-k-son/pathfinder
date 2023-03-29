@@ -6,6 +6,7 @@ import Nav from "./Nav";
 import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
 import { aStar, displayAStar } from "../algorithms/Astar";
 import { bfs, displayBfs } from "../algorithms/BreadthFirstSearch";
+import { dfs, displayDfs } from "../algorithms/DepthFirstSearch";
 
 import "./Pathfinder.css";
 
@@ -43,35 +44,21 @@ export default function Pathfinder() {
 
   const runAlgorithm = () => {
     if (algorithm === "A*") {
-      visualizeAStar();
+      visualizeAlgorithm(aStar, displayAStar);
     } else if (algorithm === "Dijkstra") {
-      visualizeDijkstra();
+      visualizeAlgorithm(dijkstra, displayDijkstra);
     } else if (algorithm === "BFS") {
-      visualizeBFS();
+      visualizeAlgorithm(bfs, displayBfs);
+    } else if (algorithm === "DFS") {
+      visualizeAlgorithm(dfs, displayDfs);
     }
   };
 
-  const visualizeAStar = () => {
+  const visualizeAlgorithm = (algorithm, displayAlgorithm) => {
     const start = grid[startRow][startCol];
     const goal = grid[goalRow][goalCol];
-    const visited = aStar(start, goal, grid);
-    const path = displayAStar(goal);
-    animateAlgorithm(visited, path);
-  };
-
-  const visualizeDijkstra = () => {
-    const start = grid[startRow][startCol];
-    const goal = grid[goalRow][goalCol];
-    const visited = dijkstra(start, goal, grid);
-    const path = displayDijkstra(goal);
-    animateAlgorithm(visited, path);
-  };
-
-  const visualizeBFS = () => {
-    const start = grid[startRow][startCol];
-    const goal = grid[goalRow][goalCol];
-    const visited = bfs(start, goal, grid);
-    const path = displayBfs(goal);
+    const visited = algorithm(start, goal, grid);
+    const path = displayAlgorithm(goal);
     animateAlgorithm(visited, path);
   };
 
