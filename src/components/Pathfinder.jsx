@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 // import Grid from "./Grid";
 import Cell from "./Cell";
-import DropdownMenu from "./DropdownMenu";
+import Nav from "./Nav";
+
 import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
 import { aStar, displayAStar } from "../algorithms/Astar";
 
@@ -10,19 +11,15 @@ import "./Pathfinder.css";
 export default function Pathfinder() {
   const [grid, setGrid] = useState([]);
   const [isMousePressed, setIsMousePressed] = useState(false);
-  const [startRow, setStartRow] = useState(11);
+  const [startRow, setStartRow] = useState(8);
   const [startCol, setStartCol] = useState(5);
-  const [goalRow, setGoalRow] = useState(11);
-  const [goalCol, setGoalCol] = useState(10);
+  const [goalRow, setGoalRow] = useState(8);
+  const [goalCol, setGoalCol] = useState(35);
   const rowSize = 18;
   const colSize = 40;
-  // let startRow = 11;
-  // let startCol = 5;
-  // let goalRow = 11;
-  // let goalCol = 10;
 
   const [algorithm, setAlgorithm] = useState("A*");
-
+  const [reset, setReset] = useState("Complete");
   const [moveStart, setMoveStart] = useState(false);
   const [moveGoal, setMoveGoal] = useState(false);
 
@@ -33,18 +30,14 @@ export default function Pathfinder() {
   const selectAlgorithm = (algorithm) => {
     setAlgorithm(algorithm);
   };
-
-  const moveTheGoal = () => {
-    const g = document.querySelector(".goal");
-    g.classList.add("opacity");
-    setMoveGoal(true);
-    g.classList.remove(".goal", ".opacity");
+  const selectReset = (state) => {
+    setReset(state);
   };
-  const moveTheStart = () => {
-    const s = document.querySelector(".start");
-    s.classList.add("opacity");
-    setMoveStart(true);
-    s.classList.remove(".start", ".opacity");
+  const moveTheGoal = (state) => {
+    setMoveGoal(state);
+  };
+  const moveTheStart = (state) => {
+    setMoveStart(state);
   };
 
   const runAlgorithm = () => {
@@ -52,6 +45,101 @@ export default function Pathfinder() {
       visualizeAStar();
     } else if (algorithm === "Dijkstra") {
       visualizeDijkstra();
+    }
+  };
+
+  const visualizeDijkstra = () => {
+    const start = grid[startRow][startCol];
+    const goal = grid[goalRow][goalCol];
+    const visited = dijkstra(start, goal, grid);
+    const path = displayDijkstra(goal);
+    animateAlgorithm(visited, path);
+  };
+
+  const visualizeAStar = () => {
+    const start = grid[startRow][startCol];
+    const goal = grid[goalRow][goalCol];
+    const visited = aStar(start, goal, grid);
+    const path = displayAStar(goal);
+    animateAlgorithm(visited, path);
+  };
+
+  const animateAlgorithm = (visited, path) => {
+    for (let i = 0; i <= visited.length; i++) {
+      const node = visited[i];
+      if (i == visited.length) {
+        setTimeout(() => {
+          animatePath(path);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        document
+          .querySelector(`#c-r${node.row}-c${node.col}`)
+          .classList.add("node-visited");
+      }, 10 * i);
+    }
+  };
+
+  const animatePath = (path) => {
+    for (let i = 0; i < path.length; i++) {
+      const node = path[i];
+      setTimeout(() => {
+        document
+          .querySelector(`#c-r${node.row}-c${node.col}`)
+          .classList.add("node-path");
+      }, 50 * i);
+    }
+  };
+
+  const generateGrid = () => {
+    const g = [];
+    for (let i = 0; i < rowSize; i++) {
+      const r = [];
+      for (let j = 0; j < colSize; j++) {
+        r.push(generateCell(i, j));
+      }
+      g.push(r);
+    }
+    setGrid(g);
+  };
+  const generateCell = (row, col) => {
+    return {
+      row,
+      col,
+      isStart: row === startRow && col === startCol,
+      isGoal: row === goalRow && col === goalCol,
+      distance: Infinity,
+      isVisited: false,
+      isWall: false,
+      previousNode: null,
+    };
+  };
+
+  const resetBoard = () => {
+    if (reset === "Complete") {
+      const cells = document.querySelectorAll("div.cell");
+      for (const cell of cells) {
+        cell.classList.remove("node-path", "node-visited", "wall");
+      }
+    } else if (reset === "Path") {
+      const cells = document.querySelectorAll("div.cell");
+      for (const cell of cells) {
+        cell.classList.remove("node-path", "node-visited");
+      }
+    } else if (reset === "Walls") {
+      const cells = document.querySelectorAll("div.cell");
+      for (const cell of cells) {
+        cell.classList.remove("node-visited", "wall");
+      }
+    }
+    for (const r of grid) {
+      for (const c of r) {
+        c.distance = Infinity;
+        c.isVisited = false;
+        if (reset !== "Path") c.isWall = false;
+        c.previousNode = null;
+      }
     }
   };
 
@@ -112,114 +200,18 @@ export default function Pathfinder() {
     return newGrid;
   };
 
-  const visualizeDijkstra = () => {
-    const start = grid[startRow][startCol];
-    const goal = grid[goalRow][goalCol];
-    const visited = dijkstra(start, goal, grid);
-    const path = displayDijkstra(goal);
-    animateAlgorithm(visited, path);
-  };
-
-  const visualizeAStar = () => {
-    const start = grid[startRow][startCol];
-    const goal = grid[goalRow][goalCol];
-    console.log(goalRow, goalCol);
-    const visited = aStar(start, goal, grid);
-    console.log(visited);
-    const path = displayAStar(goal);
-    console.log(path);
-    animateAlgorithm(visited, path);
-  };
-
-  const animateAlgorithm = (visited, path) => {
-    console.log("ANIMATE!");
-    console.log(visited);
-    console.log(path);
-    for (let i = 0; i <= visited.length; i++) {
-      const node = visited[i];
-      if (i == visited.length) {
-        setTimeout(() => {
-          animatePath(path);
-        }, 10 * i);
-        return;
-      }
-      setTimeout(() => {
-        document
-          .querySelector(`#c-r${node.row}-c${node.col}`)
-          .classList.add("node-visited");
-      }, 10 * i);
-    }
-  };
-
-  const animatePath = (path) => {
-    for (let i = 0; i < path.length; i++) {
-      const node = path[i];
-      setTimeout(() => {
-        document
-          .querySelector(`#c-r${node.row}-c${node.col}`)
-          .classList.add("node-path");
-      }, 50 * i);
-    }
-  };
-
-  const generateGrid = () => {
-    const g = [];
-    for (let i = 0; i < rowSize; i++) {
-      const r = [];
-      for (let j = 0; j < colSize; j++) {
-        r.push(generateCell(i, j));
-      }
-      g.push(r);
-    }
-    setGrid(g);
-  };
-  const generateCell = (row, col) => {
-    return {
-      row,
-      col,
-      isStart: row === startRow && col === startCol,
-      isGoal: row === goalRow && col === goalCol,
-      distance: Infinity,
-      isVisited: false,
-      isWall: false,
-      previousNode: null,
-    };
-  };
-
-  const resetBoard = () => {
-    const cells = document.querySelectorAll("div.cell");
-    for (const cell of cells) {
-      cell.classList.remove("node-path", "node-visited", "wall");
-    }
-    for (const r of grid) {
-      for (const c of r) {
-        c.distance = Infinity;
-        c.isVisited = false;
-        c.isWall = false;
-        c.previousNode = null;
-      }
-    }
-  };
-
   return (
     <div>
-      <div className="nav">
-        <div className="nav-top">
-          <p>Pathfinder Visualizer</p>
-          <DropdownMenu
-            title={"Algorithms"}
-            options={["A*", "Dijkstra"]}
-            selection={selectAlgorithm}
-          />
-          <div className="maze-algorithms">Maze Generator</div>
-        </div>
-        <div className="nav-bottom">
-          <button onClick={moveTheStart}>Move Start</button>
-          <button onClick={moveTheGoal}>Move Goal</button>
-          <button onClick={runAlgorithm}>{`Run: ${algorithm}`}</button>
-          <button onClick={resetBoard}>RESET</button>
-        </div>
-      </div>
+      <Nav
+        selectAlgorithm={selectAlgorithm}
+        selectReset={selectReset}
+        moveTheStart={moveTheStart}
+        moveTheGoal={moveTheGoal}
+        runAlgorithm={runAlgorithm}
+        resetBoard={resetBoard}
+        algorithm={algorithm}
+        reset={reset}
+      />
 
       <div className="grid">
         {grid.map((row, rowIdx) => {
