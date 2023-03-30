@@ -8,25 +8,15 @@ export function mazeDfs(start, goal, grid) {
     const closestNode = notVisitedNodes.pop();
     // skip if the node has been visited
     if (closestNode.isVisited) continue;
-
     closestNode.isVisited = true;
-
     visitedNodes.push(closestNode);
-    // if (closestNode.row === goal.row && closestNode.col === goal.col) {
-    //   console.log("found goal");
-    //   console.log(closestNode === goal);
-    //   return visitedNodes;
-    // }
-    updateNotVisitedNodes(closestNode, grid, notVisitedNodes, walls);
-    // while (notVisitedNodes.length && notVisitedNodes[0].isVisited) {
-    //   notVisitedNodes.pop();
-    // }
+    updateNotVisitedNodes(closestNode, grid, notVisitedNodes, walls, goal);
   }
   return [visitedNodes, walls];
 }
-function updateNotVisitedNodes(node, grid, notVisitedNodes, walls) {
+function updateNotVisitedNodes(node, grid, notVisitedNodes, walls, goal) {
   const nodesToCheck = getNotVisitedNeighbors(node, grid);
-  const nodesToVisit = createWall(nodesToCheck, walls);
+  const nodesToVisit = createWall(nodesToCheck, walls, goal);
   for (const neighbor of nodesToVisit) {
     neighbor.distance = node.distance + 1;
     neighbor.previousNode = node;
@@ -44,9 +34,10 @@ function getNotVisitedNeighbors(node, grid) {
   return neighbors.filter((neighbor) => !neighbor.isVisited);
 }
 
-function createWall(neighbors, walls) {
+function createWall(neighbors, walls, goal) {
   // DO NOT MAKE AN IMPOSSIBLE MAZE
   // THERE MUST BE AT LEAST ONE DIRECTION A NODE CAN TRAVEL
+  neighbors = neighbors.filter((neighbor) => neighbor != goal);
   if (neighbors.length <= 1) return neighbors;
   const rng = Math.floor(Math.random() * neighbors.length);
   const rngNode = neighbors[rng];

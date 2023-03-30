@@ -50,7 +50,17 @@
   animation-fill-mode: forwards;
   animation-play-state: running;
 }
-/* .wall {
+.node-visited-maze {
+  animation-name: visitedAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  /* animation-fill-mode: forwards;
+  animation-play-state: running; */
+}
+.wall {
   animation-name: wallAnimation;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
@@ -59,7 +69,10 @@
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
   animation-play-state: running;
-} */
+}
+.wall {
+  background-color: rgba(32, 51, 84, 0.75);
+}
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);

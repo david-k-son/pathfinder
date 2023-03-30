@@ -59,8 +59,9 @@ export default function Pathfinder() {
       visualizeAlgorithm(dfs, displayDfs, true);
     } else {
       // RUN MAZE ALGORITHM
+      setReset("Reset-Path");
       if (algorithm === "Generate Maze-DFS") {
-        visualizeAlgorithm(mazeDfs, displayMazeDfs, false);
+        visualizeMaze(mazeDfs);
       }
     }
   };
@@ -68,28 +69,85 @@ export default function Pathfinder() {
   const visualizeAlgorithm = (algorithm, displayAlgorithm, isPath) => {
     const start = grid[startRow][startCol];
     const goal = grid[goalRow][goalCol];
-    const visited = algorithm(start, goal, grid);
+    let visited = [];
+    if (isPath) {
+      visited = algorithm(start, goal, grid);
+    } else {
+      visited = algorithm(start, goal, grid)[0];
+    }
     const path = displayAlgorithm(goal);
     animateAlgorithm(visited, path, isPath);
   };
-
+  const visualizeMaze = (algorithm) => {
+    const start = grid[startRow][startCol];
+    const goal = grid[goalRow][goalCol];
+    const res = algorithm(start, goal, grid);
+    const path = res[0];
+    const walls = res[1];
+    animateWalls(path, walls);
+  };
   const animateAlgorithm = (visited, path, isPath) => {
     for (let i = 0; i <= visited.length; i++) {
-      const node = visited[i];
       if (i === visited.length) {
         if (isPath) {
           setTimeout(() => {
             animatePath(path);
           }, 10 * i);
+        } else {
+          // setTimeout(() => {
+          //   resetBoard();
+          // }, 10 * i);
         }
         return;
+      } else {
+        // const node = visited[i];
+        setTimeout(() => {
+          const node = visited[i];
+          document
+            .querySelector(`#c-r${node.row}-c${node.col}`)
+            .classList.add("node-visited");
+        }, 10 * i);
       }
+    }
+  };
+  const animateWalls = (visited, walls) => {
+    // for (let i = 0; i < visited.length; i++) {
+    //   const node = visited[i];
+    //   if (i < walls.length) {
+    //     const wall = walls[i];
+    //     setTimeout(() => {
+    //       document
+    //         .querySelector(`#c-r${wall.row}-c${wall.col}`)
+    //         .classList.add("wall");
+    //       document
+    //         .querySelector(`#c-r${node.row}-c${node.col}`)
+    //         .classList.add("node-visited");
+    //     }, 10 * i);
+    //   } else {
+    //     setTimeout(() => {
+    //       document
+    //         .querySelector(`#c-r${node.row}-c${node.col}`)
+    //         .classList.add("node-visited");
+    //     }, 10 * i);
+    //   }
+    // }
+    for (let i = 0; i < walls.length; i++) {
+      const wall = walls[i];
       setTimeout(() => {
+        setTimeout(() => {
+          if (i < visited.length) {
+            const node = visited[i];
+            document
+              .querySelector(`#c-r${node.row}-c${node.col}`)
+              .classList.add("node-visited-maze");
+          }
+        }, 5 * i);
         document
-          .querySelector(`#c-r${node.row}-c${node.col}`)
-          .classList.add("node-visited");
+          .querySelector(`#c-r${wall.row}-c${wall.col}`)
+          .classList.add("wall");
       }, 10 * i);
     }
+    return;
   };
 
   const animatePath = (path) => {
@@ -129,30 +187,38 @@ export default function Pathfinder() {
 
   const resetBoard = () => {
     console.log(reset);
+    const cells = document.querySelectorAll("div.cell");
     if (reset === "Reset-Complete") {
-      const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
-        cell.classList.remove("node-path", "node-visited", "wall");
+        cell.classList.remove("node-path", "wall");
       }
     } else if (reset === "Reset-Path") {
-      const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
-        cell.classList.remove("node-path", "node-visited");
+        cell.classList.remove("node-path");
       }
     } else if (reset === "Reset-Walls") {
-      const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
-        cell.classList.remove("node-visited", "wall");
+        cell.classList.remove("wall");
       }
     }
+    for (const cell of cells) {
+      cell.classList.remove("node-visited", "node-visited-maze");
+    }
+
     for (const r of grid) {
       for (const c of r) {
         c.distance = Infinity;
         c.isVisited = false;
-        if (reset !== "Path") c.isWall = false;
-        c.previousNode = null;
+        if (reset !== "Reset-Path") c.isWall = false;
       }
     }
+    if (reset !== "Reset-Path") {
+      const nodes = document.querySelectorAll(".cell");
+      for (const node of nodes) {
+        node.classList.remove("wall");
+      }
+    }
+    setGrid(grid);
   };
 
   const onMouseDown = (row, col) => {
