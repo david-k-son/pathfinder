@@ -37,7 +37,7 @@ export default function Nav({
         />
         <DropdownMenu
           title={"Generate Maze"}
-          options={["Random"]}
+          options={["DFS"]}
           selection={selectAlgorithm}
         />
         <DropdownMenu

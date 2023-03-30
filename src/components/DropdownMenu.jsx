@@ -20,7 +20,7 @@ export default function DropdownMenu({ title, options, selection }) {
               <li
                 key={`dropdownmenuoption-${optionIdx}`}
                 className="dropdown-menu-item"
-                onClick={() => selection(option)}
+                onClick={() => selection(`${title}-${option}`)}
               >
                 {option}
               </li>

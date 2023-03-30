@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   background-color: #181a1b;
+  overflow: hidden;
 }
 .row {
   display: flex;
@@ -19,12 +20,6 @@
 }
 
 .nav {
-  /* display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  background-color: #203354;
-  color: white; */
   background-color: #203354;
   padding-bottom: 0.5rem;
 }
@@ -55,6 +50,16 @@
   animation-fill-mode: forwards;
   animation-play-state: running;
 }
+/* .wall {
+  animation-name: wallAnimation;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+} */
 @keyframes visitedAnimation {
   0% {
     transform: scale(0.3);
@@ -74,6 +79,28 @@
   100% {
     transform: scale(1);
     background-color: rgba(0, 190, 218, 0.75);
+  }
+}
+
+@keyframes wallAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(0, 217, 159, 0.75);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba(32, 51, 84, 0.75);
   }
 }
 

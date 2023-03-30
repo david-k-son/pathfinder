@@ -3,10 +3,15 @@ import React, { useState, useEffect } from "react";
 import Cell from "./Cell";
 import Nav from "./Nav";
 
-import { dijkstra, displayDijkstra } from "../algorithms/Dijkstra";
-import { aStar, displayAStar } from "../algorithms/Astar";
-import { bfs, displayBfs } from "../algorithms/BreadthFirstSearch";
-import { dfs, displayDfs } from "../algorithms/DepthFirstSearch";
+import { dijkstra, displayDijkstra } from "../algorithms/pathfinder/Dijkstra";
+import { aStar, displayAStar } from "../algorithms/pathfinder/Astar";
+import { bfs, displayBfs } from "../algorithms/pathfinder/BreadthFirstSearch";
+import { dfs, displayDfs } from "../algorithms/pathfinder/DepthFirstSearch";
+
+import {
+  mazeDfs,
+  displayMazeDfs,
+} from "../algorithms/mazegenerator/MazeDepthFirstSearch";
 
 import "./Pathfinder.css";
 
@@ -20,7 +25,7 @@ export default function Pathfinder() {
   const rowSize = 18;
   const colSize = 40;
 
-  const [algorithm, setAlgorithm] = useState("A*");
+  const [algorithm, setAlgorithm] = useState("Path-A*");
   const [reset, setReset] = useState("Complete");
   const [moveStart, setMoveStart] = useState(false);
   const [moveGoal, setMoveGoal] = useState(false);
@@ -43,32 +48,40 @@ export default function Pathfinder() {
   };
 
   const runAlgorithm = () => {
-    if (algorithm === "A*") {
-      visualizeAlgorithm(aStar, displayAStar);
-    } else if (algorithm === "Dijkstra") {
-      visualizeAlgorithm(dijkstra, displayDijkstra);
-    } else if (algorithm === "BFS") {
-      visualizeAlgorithm(bfs, displayBfs);
-    } else if (algorithm === "DFS") {
-      visualizeAlgorithm(dfs, displayDfs);
+    console.log(algorithm);
+    if (algorithm === "Algorithms-A*") {
+      visualizeAlgorithm(aStar, displayAStar, true);
+    } else if (algorithm === "Algorithms-Dijkstra") {
+      visualizeAlgorithm(dijkstra, displayDijkstra, true);
+    } else if (algorithm === "Algorithms-BFS") {
+      visualizeAlgorithm(bfs, displayBfs, true);
+    } else if (algorithm === "Algorithms-DFS") {
+      visualizeAlgorithm(dfs, displayDfs, true);
+    } else {
+      // RUN MAZE ALGORITHM
+      if (algorithm === "Generate Maze-DFS") {
+        visualizeAlgorithm(mazeDfs, displayMazeDfs, false);
+      }
     }
   };
 
-  const visualizeAlgorithm = (algorithm, displayAlgorithm) => {
+  const visualizeAlgorithm = (algorithm, displayAlgorithm, isPath) => {
     const start = grid[startRow][startCol];
     const goal = grid[goalRow][goalCol];
     const visited = algorithm(start, goal, grid);
     const path = displayAlgorithm(goal);
-    animateAlgorithm(visited, path);
+    animateAlgorithm(visited, path, isPath);
   };
 
-  const animateAlgorithm = (visited, path) => {
+  const animateAlgorithm = (visited, path, isPath) => {
     for (let i = 0; i <= visited.length; i++) {
       const node = visited[i];
-      if (i == visited.length) {
-        setTimeout(() => {
-          animatePath(path);
-        }, 10 * i);
+      if (i === visited.length) {
+        if (isPath) {
+          setTimeout(() => {
+            animatePath(path);
+          }, 10 * i);
+        }
         return;
       }
       setTimeout(() => {
@@ -115,17 +128,18 @@ export default function Pathfinder() {
   };
 
   const resetBoard = () => {
-    if (reset === "Complete") {
+    console.log(reset);
+    if (reset === "Reset-Complete") {
       const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
         cell.classList.remove("node-path", "node-visited", "wall");
       }
-    } else if (reset === "Path") {
+    } else if (reset === "Reset-Path") {
       const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
         cell.classList.remove("node-path", "node-visited");
       }
-    } else if (reset === "Walls") {
+    } else if (reset === "Reset-Walls") {
       const cells = document.querySelectorAll("div.cell");
       for (const cell of cells) {
         cell.classList.remove("node-visited", "wall");
